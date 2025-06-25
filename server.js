@@ -64,6 +64,22 @@ app.get('/api/registros', (req, res) => {
   }
 });
 
+app.post('/api/exportar-filtro', (req, res) => {
+  const dados = req.body;
+  const XLSX = require('xlsx');
+
+  const sheet = XLSX.utils.json_to_sheet(dados);
+  const workbook = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(workbook, sheet, 'Filtrado');
+
+  const buffer = XLSX.write(workbook, { type: 'buffer', bookType: 'xlsx' });
+
+  res.setHeader('Content-Disposition', 'attachment; filename="dados-filtrados.xlsx"');
+  res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+  res.send(buffer);
+});
+
+
 app.delete('/api/data/:codigoArquivo', (req, res) => {
   const codigo = req.params.codigoArquivo;
 
