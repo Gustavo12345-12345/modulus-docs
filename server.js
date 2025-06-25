@@ -1,5 +1,3 @@
-const PORT = process.env.PORT || 3000;
-
 const express = require('express');
 const bodyParser = require('body-parser');
 const fs = require('fs');
@@ -12,7 +10,7 @@ const app = express();
 const server = http.createServer(app);
 const wss = new WebSocket.Server({ server });
 
-
+const PORT = process.env.PORT || 3000;
 
 app.use(bodyParser.json());
 app.use(express.static(__dirname)); // index.html, script.js, etc.
@@ -64,22 +62,6 @@ app.get('/api/registros', (req, res) => {
   }
 });
 
-app.post('/api/exportar-filtro', (req, res) => {
-  const dados = req.body;
-  const XLSX = require('xlsx');
-
-  const sheet = XLSX.utils.json_to_sheet(dados);
-  const workbook = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(workbook, sheet, 'Filtrado');
-
-  const buffer = XLSX.write(workbook, { type: 'buffer', bookType: 'xlsx' });
-
-  res.setHeader('Content-Disposition', 'attachment; filename="dados-filtrados.xlsx"');
-  res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-  res.send(buffer);
-});
-
-
 app.delete('/api/data/:codigoArquivo', (req, res) => {
   const codigo = req.params.codigoArquivo;
 
@@ -101,12 +83,36 @@ app.delete('/api/data/:codigoArquivo', (req, res) => {
   res.sendStatus(200);
 });
 
-server.listen(PORT, () => {
-  console.log(`Servidor rodando em http://localhost:${PORT}`);
+app.put('/api/data/:codigoArquivo/campo', (req, res) => {
+  const { campo, valor } = req.body;
+  const codigo = req.params.codigoArquivo;
+
+  if (!fs.existsSync(filePath)) return res.sendStatus(404);
+
+  const workbook = XLSX.readFile(filePath);
+  const sheet = workbook.Sheets[aba];
+  const dados = XLSX.utils.sheet_to_json(sheet);
+
+  const atualizados = dados.map(reg =>
+    reg.CodigoArquivo === codigo ? { ...reg, [campo]: valor } : reg
+  );
+
+  const novaPlanilha = XLSX.utils.json_to_sheet(atualizados);
+  const novoWorkbook = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(novoWorkbook, novaPlanilha, aba);
+  XLSX.writeFile(novoWorkbook, filePath);
+
+  res.sendStatus(200);
 });
+
 app.post('/api/exportar-filtro', (req, res) => {
-  const dados = req.body;
-  const sheet = XLSX.utils.json_to_sheet(dados);
+  const dadosFiltrados = req.body;
+
+  if (!Array.isArray(dadosFiltrados) || dadosFiltrados.length === 0) {
+    return res.status(400).send('Nenhum dado enviado para exportação.');
+  }
+
+  const sheet = XLSX.utils.json_to_sheet(dadosFiltrados);
   const workbook = XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(workbook, sheet, 'Filtrado');
 
@@ -115,4 +121,8 @@ app.post('/api/exportar-filtro', (req, res) => {
   res.setHeader('Content-Disposition', 'attachment; filename="dados-filtrados.xlsx"');
   res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
   res.send(buffer);
+});
+
+server.listen(PORT, () => {
+  console.log(`Servidor rodando em http://localhost:${PORT}`);
 });
