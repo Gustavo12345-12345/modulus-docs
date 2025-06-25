@@ -2,7 +2,7 @@
 body {
   font-family: 'Segoe UI', sans-serif;
   margin: 20px;
-  background-color: ##ffffff;
+  background-color: #ffffff;
   color: #333;
 }
 
@@ -19,7 +19,12 @@ h2 {
 }
 
 /* Logo inferior */
-
+.logo-canto-inferior {
+  position: fixed;
+  bottom: 10px;
+  right: 10px;
+  max-height: 40px;
+}
 
 /* Container para os combos e botões */
 .container {
