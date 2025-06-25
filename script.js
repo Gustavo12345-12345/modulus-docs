@@ -1,5 +1,3 @@
-
-
 document.getElementById('btnGerar').addEventListener('click', () => {
   const tipoProjeto   = document.getElementById('TipoProjeto').value;
   const tipoObra      = document.getElementById('TipoObra').value;
@@ -37,6 +35,7 @@ document.getElementById('btnGerar').addEventListener('click', () => {
   }).then(response => {
     if (response.ok) {
       alert("Código gerado com sucesso!");
+      loadDataFromServer();
     } else {
       alert("Erro ao gerar código.");
     }
@@ -122,6 +121,7 @@ document.querySelectorAll('.filtros input').forEach((input, colIndex) => {
     });
   });
 });
+
 function createEditableCell(value, codigoArquivo, campo) {
   const span = document.createElement('span');
   span.textContent = value;
@@ -140,54 +140,16 @@ function createEditableCell(value, codigoArquivo, campo) {
   });
   return span;
 }
-app.put('/api/data/:codigoArquivo/campo', (req, res) => {
-  const { campo, valor } = req.body;
-  const codigo = req.params.codigoArquivo;
 
-  if (!fs.existsSync(filePath)) return res.sendStatus(404);
-
-  const workbook = XLSX.readFile(filePath);
-  const sheet = workbook.Sheets[aba];
-  const dados = XLSX.utils.sheet_to_json(sheet);
-
-  const atualizados = dados.map(reg =>
-    reg.CodigoArquivo === codigo ? { ...reg, [campo]: valor } : reg
-  );
-
-  const novaPlanilha = XLSX.utils.json_to_sheet(atualizados);
-  const novoWorkbook = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(novoWorkbook, novaPlanilha, aba);
-  XLSX.writeFile(novoWorkbook, filePath);
-
-  res.sendStatus(200);
-});
 document.getElementById('btnLimparFiltros').addEventListener('click', () => {
   const filtros = document.querySelectorAll('.filtros input');
   filtros.forEach(input => input.value = '');
 
   const linhas = document.querySelectorAll('#tabela tbody tr');
   linhas.forEach(linha => linha.style.display = '');
-});
-document.getElementById('btnLimparFiltros').addEventListener('click', () => {
-  // Limpa todos os campos da linha de filtros
-  document.querySelectorAll('.filtros input').forEach(input => {
-    input.value = '';
-  });
-
-  // Reexibe todas as linhas da tabela
-  document.querySelectorAll('#tabela tbody tr').forEach(row => {
-    row.style.display = '';
-  });
-});
-document.getElementById('btnLimparFiltros').addEventListener('click', () => {
-  // 1. Limpa todos os campos de input da linha de filtros
-  document.querySelectorAll('.filtros input').forEach(input => {
-    input.value = '';
-  });
-
-  // 2. Recarrega os dados diretamente do servidor (força tabela completa)
   loadDataFromServer();
 });
+
 document.getElementById('btnExportarFiltro').addEventListener('click', () => {
   const rows = document.querySelectorAll('#tabela tbody tr');
   const dadosFiltrados = [];
