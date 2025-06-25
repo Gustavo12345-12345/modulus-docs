@@ -14,25 +14,20 @@
   <div class="container">
     <!-- Agrupamento de todos os combos e botões -->
     <div class="form-group">
+      
       <div class="combo">
-        <label>Tipo de Projeto</label>
-        <select id="TipoProjeto">
+        <label>Código do Projeto</label>
+        <select id="CodigoProjeto">
           <option value="" selected disabled hidden>Selecione...</option>
-          <option value="ANT">Anteprojeto</option>
-          <option value="FUN">Funcional</option>
-          <option value="CON">Conceitual</option>
-          <option value="PBA">Básico</option>
-          <option value="EXE">Executivo</option>
-          <option value="ASB">As Built</option>
-          <option value="EVT">Estudos de Viabilidade Técnica, Econômica e Financeira</option>
-          <option value="AMB">Ambiental</option>
-          <option value="SUP">Supervisão de Obras</option>
-          <option value="ATO">Apoio Técnico de Obras</option>
-          <option value="VID">Verificador Independente</option>
-          <option value="OUT">Outros</option>
+          <option value="25001">25001 - Duplicação BR-101/SE</option>
+          <option value="25002">25002 - Restauração BA-052</option>
+          <option value="25003">25003 - Ponte sobre o Rio Verde</option>
+          <option value="25004">25004 - Acesso ao Aeroporto</option>
+          <option value="25005">25005 - Travessia Urbana em Itabaiana</option>
+          <option value="25006">25006 - Contorno de Lagarto</option>
         </select>
       </div>
-
+      
       <div class="combo">
         <label>Tipo de Obra</label>
         <select id="TipoObra">
@@ -73,6 +68,55 @@
           <option value="PAV">Pavimento</option>
           <option value="PON">Ponto de Ônibus</option>
           <option value="PCR">Pontos Críticos</option>
+        </select>
+      </div>
+
+      <div class="combo">
+        <label>Tipo de Projeto</label>
+        <select id="TipoProjeto">
+          <option value="" selected disabled hidden>Selecione...</option>
+          <option value="ANT">Anteprojeto</option>
+          <option value="FUN">Funcional</option>
+          <option value="CON">Conceitual</option>
+          <option value="PBA">Básico</option>
+          <option value="EXE">Executivo</option>
+          <option value="ASB">As Built</option>
+          <option value="EVT">Estudos de Viabilidade Técnica, Econômica e Financeira</option>
+          <option value="AMB">Ambiental</option>
+          <option value="SUP">Supervisão de Obras</option>
+          <option value="ATO">Apoio Técnico de Obras</option>
+          <option value="VID">Verificador Independente</option>
+          <option value="OUT">Outros</option>
+        </select>
+      </div>
+
+      <div class="combo">
+        <label>Tipo de Documento</label>
+        <select id="TipoDoc">
+          <option value="" selected disabled hidden>Selecione...</option>
+          <option value="DE">Desenho</option>
+          <option value="BO">Boletins</option>
+          <option value="CR">Cronograma</option>
+          <option value="EM">Especificação de materiais e equipamentos</option>
+          <option value="ES">Especificação de Serviço</option>
+          <option value="ET">Especificação Técnica</option>
+          <option value="GR">Guia de remessa de documentos</option>
+          <option value="IA">Imagem de levantamento aéreo</option>
+          <option value="ID">Índice de documentos</option>
+          <option value="IP">Instrução de Projeto</option>
+          <option value="IT">Instrução de Trabalho</option>
+          <option value="LM">Lista de Material e Equipamentos</option>
+          <option value="MC">Memorial de Cálculo</option>
+          <option value="MD">Memorial Descritivo</option>
+          <option value="NS">Nota de Serviço</option>
+          <option value="PL">Planilha de serviços, quantidades e preços</option>
+          <option value="PP">Projeto Padrão</option>
+          <option value="RV">Relatório Audiovisual</option>
+          <option value="RA">Relatório de Análise Técnica</option>
+          <option value="RM">Relatório de Monitoração</option>
+          <option value="RC">Relatório de Visita de Campo</option>
+          <option value="RF">Relatório Fotográfico</option>
+          <option value="RT">Relatório Técnico</option>
         </select>
       </div>
 
@@ -143,48 +187,9 @@
         </select>
       </div>
 
-      <div class="combo">
-        <label>Tipo de Documento</label>
-        <select id="TipoDoc">
-          <option value="" selected disabled hidden>Selecione...</option>
-          <option value="DE">Desenho</option>
-          <option value="BO">Boletins</option>
-          <option value="CR">Cronograma</option>
-          <option value="EM">Especificação de materiais e equipamentos</option>
-          <option value="ES">Especificação de Serviço</option>
-          <option value="ET">Especificação Técnica</option>
-          <option value="GR">Guia de remessa de documentos</option>
-          <option value="IA">Imagem de levantamento aéreo</option>
-          <option value="ID">Índice de documentos</option>
-          <option value="IP">Instrução de Projeto</option>
-          <option value="IT">Instrução de Trabalho</option>
-          <option value="LM">Lista de Material e Equipamentos</option>
-          <option value="MC">Memorial de Cálculo</option>
-          <option value="MD">Memorial Descritivo</option>
-          <option value="NS">Nota de Serviço</option>
-          <option value="PL">Planilha de serviços, quantidades e preços</option>
-          <option value="PP">Projeto Padrão</option>
-          <option value="RV">Relatório Audiovisual</option>
-          <option value="RA">Relatório de Análise Técnica</option>
-          <option value="RM">Relatório de Monitoração</option>
-          <option value="RC">Relatório de Visita de Campo</option>
-          <option value="RF">Relatório Fotográfico</option>
-          <option value="RT">Relatório Técnico</option>
-        </select>
-      </div>
+      
 
-      <div class="combo">
-        <label>Código do Projeto</label>
-        <select id="CodigoProjeto">
-          <option value="" selected disabled hidden>Selecione...</option>
-          <option value="25001">25001 - Duplicação BR-101/SE</option>
-          <option value="25002">25002 - Restauração BA-052</option>
-          <option value="25003">25003 - Ponte sobre o Rio Verde</option>
-          <option value="25004">25004 - Acesso ao Aeroporto</option>
-          <option value="25005">25005 - Travessia Urbana em Itabaiana</option>
-          <option value="25006">25006 - Contorno de Lagarto</option>
-        </select>
-      </div>
+      
 
       <div class="combo">
         <label>Sequência</label>
