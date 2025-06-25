@@ -13,11 +13,28 @@ const wss = new WebSocket.Server({ server });
 const PORT = process.env.PORT || 3000;
 
 app.use(bodyParser.json());
-app.use(express.static(__dirname)); // index.html, script.js, etc.
+app.use(express.static(__dirname));
 
 const filePath = path.join(__dirname, 'database.xlsx');
 const aba = 'Registros';
 
+// Estrutura padrão de colunas
+const COLUNAS_PADRAO = [
+  'Projeto', 'TipoObra', 'TipoProjeto', 'TipoDoc',
+  'Disciplina', 'Sequencia', 'Revisao',
+  'CodigoArquivo', 'Data', 'Autor'
+];
+
+// Normaliza um registro para conter todos os campos esperados
+function normalizarRegistro(registro) {
+  const novo = {};
+  COLUNAS_PADRAO.forEach(col => {
+    novo[col] = registro[col] || '';
+  });
+  return novo;
+}
+
+// Envia mensagens via WebSocket para todos os clientes
 function broadcast(data) {
   const mensagem = JSON.stringify(data);
   wss.clients.forEach(client => {
@@ -27,67 +44,58 @@ function broadcast(data) {
   });
 }
 
-app.post('/api/data', (req, res) => {
-  const novaEntrada = req.body;
+// Cria planilha com colunas fixas
+function salvarDadosNaPlanilha(dados) {
+  const dadosNormalizados = dados.map(normalizarRegistro);
+  const sheet = XLSX.utils.json_to_sheet(dadosNormalizados, { header: COLUNAS_PADRAO });
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, sheet, aba);
+  XLSX.writeFile(wb, filePath);
+}
 
+app.post('/api/data', (req, res) => {
+  const novaEntrada = normalizarRegistro(req.body);
   let dados = [];
-  let workbook;
+
   if (fs.existsSync(filePath)) {
-    workbook = XLSX.readFile(filePath);
+    const workbook = XLSX.readFile(filePath);
     const sheet = workbook.Sheets[aba];
     dados = XLSX.utils.sheet_to_json(sheet);
-  } else {
-    workbook = XLSX.utils.book_new();
   }
 
   dados.push(novaEntrada);
-  const novaPlanilha = XLSX.utils.json_to_sheet(dados);
-  const novoWorkbook = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(novoWorkbook, novaPlanilha, aba);
-  XLSX.writeFile(novoWorkbook, filePath);
-
-  broadcast({ action: 'update' }); // notifica todos os clientes
-
+  salvarDadosNaPlanilha(dados);
+  broadcast({ action: 'update' });
   res.sendStatus(200);
 });
 
 app.get('/api/registros', (req, res) => {
-  if (fs.existsSync(filePath)) {
-    const workbook = XLSX.readFile(filePath);
-    const sheet = workbook.Sheets[aba];
-    const dados = XLSX.utils.sheet_to_json(sheet);
-    res.json(dados);
-  } else {
-    res.json([]);
-  }
+  if (!fs.existsSync(filePath)) return res.json([]);
+  const workbook = XLSX.readFile(filePath);
+  const sheet = workbook.Sheets[aba];
+  const dados = XLSX.utils.sheet_to_json(sheet);
+  res.json(dados.map(normalizarRegistro));
 });
 
 app.delete('/api/data/:codigoArquivo', (req, res) => {
+  if (!fs.existsSync(filePath)) return res.sendStatus(404);
   const codigo = req.params.codigoArquivo;
 
-  if (fs.existsSync(filePath)) {
-    const workbook = XLSX.readFile(filePath);
-    const sheet = workbook.Sheets[aba];
-    let dados = XLSX.utils.sheet_to_json(sheet);
+  const workbook = XLSX.readFile(filePath);
+  const sheet = workbook.Sheets[aba];
+  let dados = XLSX.utils.sheet_to_json(sheet);
+  dados = dados.filter(reg => reg.CodigoArquivo !== codigo);
 
-    dados = dados.filter(reg => reg.CodigoArquivo !== codigo);
-
-    const novaPlanilha = XLSX.utils.json_to_sheet(dados);
-    const novoWorkbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(novoWorkbook, novaPlanilha, aba);
-    XLSX.writeFile(novoWorkbook, filePath);
-
-    broadcast({ action: 'delete' }); // notifica os clientes
-  }
-
+  salvarDadosNaPlanilha(dados);
+  broadcast({ action: 'delete' });
   res.sendStatus(200);
 });
 
 app.put('/api/data/:codigoArquivo/campo', (req, res) => {
+  if (!fs.existsSync(filePath)) return res.sendStatus(404);
+
   const { campo, valor } = req.body;
   const codigo = req.params.codigoArquivo;
-
-  if (!fs.existsSync(filePath)) return res.sendStatus(404);
 
   const workbook = XLSX.readFile(filePath);
   const sheet = workbook.Sheets[aba];
@@ -97,22 +105,14 @@ app.put('/api/data/:codigoArquivo/campo', (req, res) => {
     reg.CodigoArquivo === codigo ? { ...reg, [campo]: valor } : reg
   );
 
-  const novaPlanilha = XLSX.utils.json_to_sheet(atualizados);
-  const novoWorkbook = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(novoWorkbook, novaPlanilha, aba);
-  XLSX.writeFile(novoWorkbook, filePath);
-
+  salvarDadosNaPlanilha(atualizados);
   res.sendStatus(200);
 });
 
 app.post('/api/exportar-filtro', (req, res) => {
-  const dadosFiltrados = req.body;
+  const dados = req.body.map(normalizarRegistro);
 
-  if (!Array.isArray(dadosFiltrados) || dadosFiltrados.length === 0) {
-    return res.status(400).send('Nenhum dado enviado para exportação.');
-  }
-
-  const sheet = XLSX.utils.json_to_sheet(dadosFiltrados);
+  const sheet = XLSX.utils.json_to_sheet(dados, { header: COLUNAS_PADRAO });
   const workbook = XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(workbook, sheet, 'Filtrado');
 
