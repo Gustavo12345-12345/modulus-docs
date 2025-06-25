@@ -1,0 +1,16 @@
+{
+  "name": "modulus-docs",
+  "version": "1.0.0",
+  "description": "Aplicação Node.js com Excel e front-end",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "body-parser": "^1.20.2",
+    "express": "^4.18.2",
+    "ws": "^8.13.0",
+    "xlsx": "^0.18.5"
+  },
+  "license": "ISC"
+}
