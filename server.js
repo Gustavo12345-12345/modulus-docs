@@ -5,27 +5,75 @@ const XLSX = require('xlsx');
 const path = require('path');
 const http = require('http');
 const WebSocket = require('ws');
+const cookieParser = require('cookie-parser');
 
 const app = express();
 const server = http.createServer(app);
 const wss = new WebSocket.Server({ server });
 
 const PORT = process.env.PORT || 3000;
-
-app.use(bodyParser.json());
-app.use(express.static(__dirname));
-
 const filePath = path.join(__dirname, 'database.xlsx');
 const aba = 'Registros';
 
-// Estrutura padrão de colunas
 const COLUNAS_PADRAO = [
   'Projeto', 'TipoObra', 'TipoProjeto', 'TipoDoc',
   'Disciplina', 'Sequencia', 'Revisao',
   'CodigoArquivo', 'Data', 'Autor'
 ];
 
-// Normaliza um registro para conter todos os campos esperados
+// Banco de usuários (usuário → senha)
+const users = {
+  modulus01: '0001',
+  modulus02: '0002',
+  modulus03: '0003',
+  modulus04: '0004',
+  modulus05: '0005',
+  modulus06: '0006',
+  modulus07: '0007',
+  modulus08: '0008',
+  modulus09: '0009',
+  modulus10: '0010'
+};
+
+// Middlewares
+app.use(bodyParser.json());
+app.use(express.json());
+app.use(cookieParser());
+app.use(express.static(path.join(__dirname, 'public')));
+
+// Autenticação
+function requireAuth(req, res, next) {
+  const { authUser } = req.cookies;
+  if (authUser && users[authUser]) {
+    next();
+  } else {
+    res.redirect('/login.html');
+  }
+}
+
+// Login
+app.post('/login', (req, res) => {
+  const { username, password } = req.body;
+  if (users[username] === password) {
+    res.cookie('authUser', username, { httpOnly: true });
+    res.json({ success: true });
+  } else {
+    res.json({ success: false });
+  }
+});
+
+// Logout
+app.get('/logout', (req, res) => {
+  res.clearCookie('authUser');
+  res.redirect('/login.html');
+});
+
+// Página protegida
+app.get('/', requireAuth, (req, res) => {
+  res.sendFile(path.join(__dirname, 'public/index.html'));
+});
+
+// Funções auxiliares
 function normalizarRegistro(registro) {
   const novo = {};
   COLUNAS_PADRAO.forEach(col => {
@@ -34,7 +82,6 @@ function normalizarRegistro(registro) {
   return novo;
 }
 
-// Envia mensagens via WebSocket para todos os clientes
 function broadcast(data) {
   const mensagem = JSON.stringify(data);
   wss.clients.forEach(client => {
@@ -44,7 +91,6 @@ function broadcast(data) {
   });
 }
 
-// Cria planilha com colunas fixas
 function salvarDadosNaPlanilha(dados) {
   const dadosNormalizados = dados.map(normalizarRegistro);
   const sheet = XLSX.utils.json_to_sheet(dadosNormalizados, { header: COLUNAS_PADRAO });
@@ -53,6 +99,7 @@ function salvarDadosNaPlanilha(dados) {
   XLSX.writeFile(wb, filePath);
 }
 
+// Rotas de API
 app.post('/api/data', (req, res) => {
   const novaEntrada = normalizarRegistro(req.body);
   let dados = [];
@@ -123,6 +170,7 @@ app.post('/api/exportar-filtro', (req, res) => {
   res.send(buffer);
 });
 
+// Inicia o servidor
 server.listen(PORT, () => {
   console.log(`Servidor rodando em http://localhost:${PORT}`);
 });
