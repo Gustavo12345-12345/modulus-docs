@@ -101,7 +101,12 @@ function salvarDadosNaPlanilha(dados) {
 
 // Rotas de API
 app.post('/api/data', (req, res) => {
+  const user = req.cookies.authUser || 'DESCONHECIDO';
   const novaEntrada = normalizarRegistro(req.body);
+
+  // Forçar o campo Autor com o usuário logado
+  novaEntrada.Autor = user;
+
   let dados = [];
 
   if (fs.existsSync(filePath)) {
