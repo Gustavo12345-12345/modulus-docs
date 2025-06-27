@@ -182,3 +182,23 @@ h2 {
   text-align: center;
   color: #003366;
 }
+.logo-superior-central {
+  display: block;
+  margin: 20px auto 10px auto;
+  height: 80px;
+  width: auto;
+  object-fit: contain;
+}
+/* ...seu estilo anterior... */
+
+th:nth-child(1), td:nth-child(1)   { width: 50px; }  /* Projeto */
+th:nth-child(2), td:nth-child(2)   { width: 60px; }  /* TipoObra */
+th:nth-child(3), td:nth-child(3)   { width: 60px; }  /* TipoProjeto */
+th:nth-child(4), td:nth-child(4)   { width: 50px; }  /* TipoDoc */
+th:nth-child(5), td:nth-child(5)   { width: 80px; }  /* Disciplina */
+th:nth-child(6), td:nth-child(6)   { width: 40px; }  /* Sequencia */
+th:nth-child(7), td:nth-child(7)   { width: 40px; }  /* Revisao */
+th:nth-child(8), td:nth-child(8)   { width: 280px; } /* CodigoArquivo */
+th:nth-child(9), td:nth-child(9)   { width: 70px; }  /* Data */
+th:nth-child(10), td:nth-child(10) { width: 60px; }  /* Autor */
+th:nth-child(11), td:nth-child(11) { width: 50px; }  /* Ações */
