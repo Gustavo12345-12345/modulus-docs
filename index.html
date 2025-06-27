@@ -194,12 +194,14 @@
 
       <div class="combo">
         <label>Sequência</label>
-        <input type="text" id="Sequencia" placeholder="Ex: 001, A01, 105">
+        <input type="text" id="Sequencia" placeholder="Ex: 001" pattern="\d{3}" maxlength="3" title="Apenas 3 números" required>
+
       </div>
 
       <div class="combo">
         <label>Revisão</label>
-        <input type="text" id="Revisao" placeholder="Ex: 00, 01, A">
+        <input type="text" id="Revisao" placeholder="Ex: 00, A" pattern="[A-Za-z0-9]{1,2}" maxlength="2" title="Até 2 caracteres alfanuméricos" required>
+
       </div>
 
       <div class="combo" style="display:flex; flex-direction:column; justify-content:flex-end;">
