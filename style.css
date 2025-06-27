@@ -133,3 +133,52 @@ thead input {
     flex-direction: column;
   }
 }
+/* Login page styles */
+.login-container {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  width: 300px;
+  margin: 30px auto;
+  background-color: #ffffff;
+  padding: 30px;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+
+.login-container input {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+}
+
+.login-container button {
+  padding: 10px 20px;
+  background-color: #003366;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.login-container button:hover {
+  background-color: #002244;
+}
+
+.erro-login {
+  color: red;
+  text-align: center;
+}
+
+.logo-superior-central {
+  display: block;
+  margin: 20px auto 10px auto;
+  height: 70px;
+  width: auto;
+  object-fit: contain;
+}
+
+h2 {
+  text-align: center;
+  color: #003366;
+}
