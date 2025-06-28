@@ -10,243 +10,46 @@ body {
   background-color: #f5f5f7;
   color: #1d1d1f;
   padding: 20px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
 }
 
-/* LOGO SUPERIOR MUITO MENOR */
+/* LOGO SUPERIOR CENTRAL PEQUENA */
 .logo-superior-central {
   display: block;
-  margin: 5px auto 15px auto;
+  margin: 10px auto 20px auto;
   height: 25px;
-  width: auto;
-  object-fit: contain;
   opacity: 0.85;
+  object-fit: contain;
 }
 
-/* WRAPPER COMBOS + BOTOES */
-.combos-wrapper {
-  max-width: 100%;
-  overflow-x: auto;
-  padding: 8px;
-  border-radius: 8px;
-  background-color: #ffffff;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-}
-
-/* CONTAINER FLEX COMBOS E BOTOES INLINE */
-.container,
-.botoes-lado-a-lado {
-  display: inline-flex;
-  flex-direction: row;
-  gap: 12px;
-  align-items: flex-end;
+/* CONTÊINER DOS COMBOS EM LINHA */
+.combos-linha {
+  display: flex;
   flex-wrap: nowrap;
+  justify-content: space-between;
+  align-items: flex-end;
   overflow-x: auto;
-  padding: 8px 0;
+  padding: 16px;
+  gap: 16px;
+  max-width: 100%;
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
 }
 
-/* COMBOS INLINE */
+/* CADA COMBO OCUPA MESMA ALTURA, AJUSTA LARGURA FLEXÍVEL */
 .combo {
-  flex: 0 0 auto;
+  flex: 1 1 160px;
+  min-width: 160px;
+  max-width: 220px;
   display: flex;
   flex-direction: column;
-  width: 160px;
-  background-color: #ffffff;
+  background-color: #fff;
   padding: 8px 10px;
-  border-radius: 8px;
   border: 1px solid #d1d1d6;
+  border-radius: 8px;
   box-shadow: 0 1px 2px rgba(0,0,0,0.05);
 }
 
-.combo label {
-  margin-bottom: 4px;
-  font-size: 13px;
-  color: #3a3a3c;
-}
-
-.combo select,
-.combo input {
-  padding: 7px;
-  border: 1px solid #d1d1d6;
-  border-radius: 7px;
-  background-color: #fff;
-  font-size: 13px;
-  color: #1d1d1f;
-  transition: border 0.2s;
-}
-
-.combo select:focus,
-.combo input:focus {
-  border-color: #0071e3;
-  outline: none;
-}
-
-/* BOTOES INLINE MESMO CONTAINER */
-.botoes-lado-a-lado button {
-  flex: 0 0 auto;
-  padding: 9px 18px;
-  background-color: #0071e3;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  font-size: 13px;
-  white-space: nowrap;
-  transition: background-color 0.3s ease;
-}
-
-.botoes-lado-a-lado button:hover {
-  background-color: #005bb5;
-}
-
-#btnLimparFiltros {
-  background-color: #86868b;
-}
-
-#btnLimparFiltros:hover {
-  background-color: #6e6e73;
-}
-
-/* TABELA */
-table {
-  margin-top: 20px;
-  border-collapse: separate;
-  border-spacing: 0;
-  width: 100%;
-  max-width: 1200px;
-  background-color: #ffffff;
-  border-radius: 10px;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.05);
-  overflow: hidden;
-  font-size: 12px;
-}
-
-th, td {
-  padding: 9px;
-  text-align: center;
-  border-bottom: 1px solid #e5e5ea;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  color: #1d1d1f;
-}
-
-th {
-  background-color: #f2f2f7;
-  font-weight: 600;
-  font-size: 12.5px;
-}
-
-/* COLUNAS CODIGOARQUIVO MAIS LARGA */
-th:nth-child(8), td:nth-child(8) {
-  width: 280px;
-}
-
-th:not(:nth-child(8)), td:not(:nth-child(8)) {
-  width: 90px;
-}
-
-/* INPUT FILTROS */
-tr.filtros input {
-  width: 85%;
-  padding: 6px;
-  border-radius: 7px;
-  border: 1px solid #d1d1d6;
-  background-color: #fafafa;
-  font-size: 11px;
-  color: #1d1d1f;
-  transition: border 0.2s ease;
-}
-
-tr.filtros input:focus {
-  border-color: #0071e3;
-  outline: none;
-}
-
-/* LOGO INFERIOR PEQUENA */
-.logo-canto-inferior {
-  display: block;
-  margin: 20px auto 10px auto;
-  height: 20px;
-  width: auto;
-  opacity: 0.7;
-  object-fit: contain;
-}
-
-/* LOGIN PAGE */
-.login-container {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  width: 280px;
-  margin: 20px auto;
-  background-color: #ffffff;
-  padding: 20px;
-  border-radius: 10px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-}
-
-.login-container input {
-  padding: 9px;
-  border: 1px solid #d1d1d6;
-  border-radius: 8px;
-  background-color: #fafafa;
-  font-size: 13px;
-  color: #1d1d1f;
-}
-
-.login-container input:focus {
-  border-color: #0071e3;
-  outline: none;
-}
-
-.login-container button {
-  padding: 9px 18px;
-  background-color: #0071e3;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  font-size: 13px;
-}
-
-.login-container button:hover {
-  background-color: #005bb5;
-}
-
-.erro-login {
-  color: #ff3b30;
-  text-align: center;
-  font-size: 12px;
-  margin-top: 8px;
-}
-/* CONTAINER dos combos ocupa 100% com grid distribuído */
-.container {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-  gap: 16px;
-  width: 100%;
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 10px 0;
-  background-color: #ffffff;
-  border-radius: 10px;
-}
-
-/* Cada combo se ajusta para preencher igualmente */
-.combo {
-  display: flex;
-  flex-direction: column;
-  background-color: #fff;
-  padding: 10px 12px;
-  border: 1px solid #d1d1d6;
-  border-radius: 8px;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-}
-
-/* Label e input/select consistentes */
 .combo label {
   margin-bottom: 5px;
   font-size: 13px;
@@ -258,14 +61,20 @@ tr.filtros input:focus {
   padding: 8px;
   border: 1px solid #d1d1d6;
   border-radius: 7px;
-  font-size: 13px;
   background-color: #fff;
+  font-size: 13px;
   color: #1d1d1f;
+  transition: border 0.2s;
   width: 100%;
-  box-sizing: border-box;
 }
 
-/* Botões em linha ocupando toda a largura */
+.combo select:focus,
+.combo input:focus {
+  border-color: #0071e3;
+  outline: none;
+}
+
+/* BOTÕES EM LINHA ABAIXO */
 .botoes-lado-a-lado {
   display: flex;
   justify-content: center;
@@ -297,36 +106,11 @@ tr.filtros input:focus {
   background-color: #6e6e73;
 }
 
-/* LOGO SUPERIOR MENOR */
-.logo-superior-central {
-  display: block;
-  margin: 5px auto 15px auto;
-  height: 20px;
-  width: auto;
-  object-fit: contain;
-  opacity: 0.85;
-}
-
-/* LOGO INFERIOR MENOR */
+/* LOGO INFERIOR PEQUENA */
 .logo-canto-inferior {
   display: block;
   margin: 20px auto 10px auto;
   height: 20px;
-  width: auto;
   opacity: 0.7;
   object-fit: contain;
-}
-.combos-linha {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 16px;
-  justify-content: space-between;
-  width: 100%;
-}
-
-.combo {
-  flex: 1 1 150px;
-  min-width: 150px;
-  display: flex;
-  flex-direction: column;
 }
