@@ -346,44 +346,14 @@ button {
   width: 100%;
 }
 
-.btn-principal {
-  margin-top: 6px;
-  padding: 10px 16px;
-  background-color: #0071e3;
-  color: #fff;
-  border: none;
-  border-radius: 12px;
-  cursor: pointer;
-  font-size: 14px;
-}
-
-.btn-secundario {
-  padding: 8px 14px;
-  background-color: #f2f2f7;
-  border: 1px solid #d1d1d6;
-  border-radius: 10px;
-  font-size: 13px;
-  cursor: pointer;
-  transition: background-color 0.2s ease;
-}
-
-.btn-secundario:hover {
-  background-color: #e5e5ea;
-}
-.botoes-linha {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 8px;
-  margin-top: 8px;
-}
 .btn-principal, .btn-secundario {
-  padding: 6px 16px;
+  padding: 5px 20px;
   border: none;
   border-radius: 12px;
   cursor: pointer;
   font-size: 14px;
   transition: background-color 0.3s ease;
+  min-height: auto;
 }
 
 .btn-principal {
@@ -404,3 +374,5 @@ button {
 .btn-secundario:hover {
   background-color: #e5e5ea;
 }
+
+
