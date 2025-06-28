@@ -49,6 +49,7 @@
       <div class="combo">
         <label for="TipoObra">Tipo de Obra</label>
         <select id="TipoObra">
+          <!-- opções mantidas -->
           <option value="ROD">Rodovia</option>
           <option value="MIN">Mineração</option>
           <option value="ACE">Acesso</option>
@@ -156,6 +157,7 @@
       <div class="combo">
         <label for="Sequencia">Sequência</label>
         <input type="text" id="Sequencia" placeholder="Ex: 001" pattern="\d{3}" maxlength="3">
+        <button id="btnGerar" class="btn-principal">Gerar Código</button>
       </div>
 
       <div class="combo">
@@ -165,10 +167,9 @@
 
     </div>
 
-    <div class="botoes-lado-a-lado">
-      <button id="btnGerar">Gerar Código</button>
-      <button id="btnLimparFiltros">Limpar Filtros</button>
-      <button id="btnExportarFiltro">Exportar</button>
+    <div class="botoes-secundarios">
+      <button id="btnLimparFiltros" class="btn-secundario">Limpar Filtros</button>
+      <button id="btnExportarFiltro" class="btn-secundario">Exportar</button>
     </div>
   </div>
 
