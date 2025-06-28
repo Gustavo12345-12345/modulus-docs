@@ -135,10 +135,12 @@ th, td {
 }
 
 th {
-  background-color: #f2f2f7;
+  background-color: #0071e3;
+  color: white;
   font-weight: 600;
   font-size: 13px;
 }
+
 
 /* ====== Ajuste específico de largura de colunas ====== */
 th:nth-child(8), td:nth-child(8) {
@@ -375,9 +377,8 @@ button {
   gap: 8px;
   margin-top: 8px;
 }
-
 .btn-principal, .btn-secundario {
-  padding: 10px 16px;
+  padding: 6px 16px;
   border: none;
   border-radius: 12px;
   cursor: pointer;
