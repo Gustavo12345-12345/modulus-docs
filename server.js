@@ -1,4 +1,3 @@
-// server.js
 const express = require('express');
 const cookieParser = require('cookie-parser');
 const http = require('http');
@@ -53,11 +52,19 @@ app.get('/logout', (req, res) => {
 });
 
 // ====== API ======
+
+// GET registros
 app.get('/api/registros', (req, res) => {
-  const rows = db.prepare('SELECT * FROM registros ORDER BY id DESC').all();
-  res.json(rows);
+  db.all('SELECT * FROM registros ORDER BY id DESC', (err, rows) => {
+    if (err) {
+      console.error(err);
+      return res.status(500).json({ error: 'Erro ao consultar banco.' });
+    }
+    res.json(rows);
+  });
 });
 
+// POST criar ou atualizar
 app.post('/api/data', (req, res) => {
   const data = req.body;
   const autor = req.cookies.authUser || 'DESCONHECIDO';
@@ -69,57 +76,78 @@ app.post('/api/data', (req, res) => {
     }
   }
 
-  try {
-    db.prepare(`
-      INSERT OR REPLACE INTO registros
-      (Projeto, TipoObra, TipoProjeto, TipoDoc, Disciplina, Sequencia, Revisao, CodigoArquivo, Data, Autor)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-    `).run(
-      data.Projeto,
-      data.TipoObra,
-      data.TipoProjeto,
-      data.TipoDoc,
-      data.Disciplina,
-      data.Sequencia,
-      data.Revisao,
-      data.CodigoArquivo,
-      data.Data,
-      autor
-    );
+  const sql = `
+    INSERT OR REPLACE INTO registros
+    (Projeto, TipoObra, TipoProjeto, TipoDoc, Disciplina, Sequencia, Revisao, CodigoArquivo, Data, Autor)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+  `;
+  const values = [
+    data.Projeto,
+    data.TipoObra,
+    data.TipoProjeto,
+    data.TipoDoc,
+    data.Disciplina,
+    data.Sequencia,
+    data.Revisao,
+    data.CodigoArquivo,
+    data.Data,
+    autor
+  ];
 
+  db.run(sql, values, function(err) {
+    if (err) {
+      console.error(err);
+      return res.status(500).json({ error: 'Erro ao salvar no banco.' });
+    }
     broadcast({ action: 'update' });
     res.sendStatus(200);
-  } catch (e) {
-    console.error(e);
-    res.status(500).json({ error: 'Erro ao salvar no banco.' });
-  }
+  });
 });
 
+// DELETE
 app.delete('/api/data/:codigoArquivo', (req, res) => {
-  db.prepare('DELETE FROM registros WHERE CodigoArquivo = ?').run(req.params.codigoArquivo);
-  broadcast({ action: 'delete' });
-  res.sendStatus(200);
+  const codigo = req.params.codigoArquivo;
+  db.run('DELETE FROM registros WHERE CodigoArquivo = ?', [codigo], (err) => {
+    if (err) {
+      console.error(err);
+      return res.status(500).json({ error: 'Erro ao deletar.' });
+    }
+    broadcast({ action: 'delete' });
+    res.sendStatus(200);
+  });
 });
 
+// PUT atualizar campo (sequencia ou revisão)
 app.put('/api/data/:codigoArquivo/campo', (req, res) => {
   const { campo, valor } = req.body;
+  const codigo = req.params.codigoArquivo;
+
   if (!['Sequencia', 'Revisao'].includes(campo)) {
     return res.status(400).json({ error: 'Campo inválido.' });
   }
-  db.prepare(`UPDATE registros SET ${campo} = ? WHERE CodigoArquivo = ?`).run(valor, req.params.codigoArquivo);
-  broadcast({ action: 'update' });
-  res.sendStatus(200);
+
+  const sql = `UPDATE registros SET ${campo} = ? WHERE CodigoArquivo = ?`;
+  db.run(sql, [valor, codigo], (err) => {
+    if (err) {
+      console.error(err);
+      return res.status(500).json({ error: 'Erro ao atualizar campo.' });
+    }
+    broadcast({ action: 'update' });
+    res.sendStatus(200);
+  });
 });
 
+// GET exportar CSV
 app.get('/api/exportar-csv', (req, res) => {
-  const rows = db.prepare('SELECT * FROM registros').all();
-  if (!rows.length) {
-    return res.send('Nenhum registro para exportar.');
-  }
-  const header = Object.keys(rows[0]).join(',');
-  const csv = [header, ...rows.map(r => Object.values(r).map(v => `"${v}"`).join(','))].join('\n');
-  res.header('Content-Type', 'text/csv');
-  res.attachment('dados.csv').send(csv);
+  db.all('SELECT * FROM registros', (err, rows) => {
+    if (err || !rows.length) {
+      return res.send('Nenhum registro para exportar.');
+    }
+    const header = Object.keys(rows[0]).join(',');
+    const csv = [header, ...rows.map(r => Object.values(r).map(v => `"${v}"`).join(','))].join('\n');
+    res.header('Content-Type', 'text/csv');
+    res.attachment('dados.csv').send(csv);
+  });
 });
 
 const PORT = process.env.PORT || 3000;
