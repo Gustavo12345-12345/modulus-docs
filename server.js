@@ -1,9 +1,9 @@
 // server.js
 const express = require('express');
+const cookieParser = require('cookie-parser');
 const http = require('http');
 const WebSocket = require('ws');
 const path = require('path');
-const cookieParser = require('cookie-parser');
 const db = require('./db');
 
 const app = express();
@@ -15,12 +15,12 @@ app.use(cookieParser());
 app.use(express.static(__dirname));
 
 let clients = [];
-
 wss.on('connection', ws => {
   clients.push(ws);
-  ws.on('close', () => clients = clients.filter(c => c !== ws));
+  ws.on('close', () => {
+    clients = clients.filter(c => c !== ws);
+  });
 });
-
 function broadcast(message) {
   const msg = JSON.stringify(message);
   clients.forEach(client => {
@@ -30,11 +30,10 @@ function broadcast(message) {
   });
 }
 
-// ====== ROTAS LOGIN ======
+// ====== LOGIN ======
 app.get('/login', (req, res) => {
   res.sendFile(path.join(__dirname, 'login.html'));
 });
-
 app.post('/login', (req, res) => {
   let body = '';
   req.on('data', chunk => (body += chunk));
@@ -48,7 +47,6 @@ app.post('/login', (req, res) => {
     }
   });
 });
-
 app.get('/logout', (req, res) => {
   res.clearCookie('authUser');
   res.redirect('/login');
@@ -56,15 +54,14 @@ app.get('/logout', (req, res) => {
 
 // ====== API ======
 app.get('/api/registros', (req, res) => {
-  const rows = db.readAll();
+  const rows = db.prepare('SELECT * FROM registros ORDER BY id DESC').all();
   res.json(rows);
 });
 
 app.post('/api/data', (req, res) => {
   const data = req.body;
   const autor = req.cookies.authUser || 'DESCONHECIDO';
-  
-  // Validação
+
   const required = ['Projeto','TipoObra','TipoProjeto','TipoDoc','Disciplina','Sequencia','Revisao','CodigoArquivo','Data'];
   for (let field of required) {
     if (!data[field]) {
@@ -72,15 +69,34 @@ app.post('/api/data', (req, res) => {
     }
   }
 
-  const registro = { ...data, Autor: autor };
-  db.addOrReplace(registro);
+  try {
+    db.prepare(`
+      INSERT OR REPLACE INTO registros
+      (Projeto, TipoObra, TipoProjeto, TipoDoc, Disciplina, Sequencia, Revisao, CodigoArquivo, Data, Autor)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `).run(
+      data.Projeto,
+      data.TipoObra,
+      data.TipoProjeto,
+      data.TipoDoc,
+      data.Disciplina,
+      data.Sequencia,
+      data.Revisao,
+      data.CodigoArquivo,
+      data.Data,
+      autor
+    );
 
-  broadcast({ action: 'update' });
-  res.sendStatus(200);
+    broadcast({ action: 'update' });
+    res.sendStatus(200);
+  } catch (e) {
+    console.error(e);
+    res.status(500).json({ error: 'Erro ao salvar no banco.' });
+  }
 });
 
 app.delete('/api/data/:codigoArquivo', (req, res) => {
-  db.remove(req.params.codigoArquivo);
+  db.prepare('DELETE FROM registros WHERE CodigoArquivo = ?').run(req.params.codigoArquivo);
   broadcast({ action: 'delete' });
   res.sendStatus(200);
 });
@@ -90,14 +106,13 @@ app.put('/api/data/:codigoArquivo/campo', (req, res) => {
   if (!['Sequencia', 'Revisao'].includes(campo)) {
     return res.status(400).json({ error: 'Campo inválido.' });
   }
-  db.updateField(req.params.codigoArquivo, campo, valor);
+  db.prepare(`UPDATE registros SET ${campo} = ? WHERE CodigoArquivo = ?`).run(valor, req.params.codigoArquivo);
   broadcast({ action: 'update' });
   res.sendStatus(200);
 });
 
-// Exporta para CSV
 app.get('/api/exportar-csv', (req, res) => {
-  const rows = db.readAll();
+  const rows = db.prepare('SELECT * FROM registros').all();
   if (!rows.length) {
     return res.send('Nenhum registro para exportar.');
   }
