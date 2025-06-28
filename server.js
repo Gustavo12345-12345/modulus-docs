@@ -1,181 +1,134 @@
+// server.js
 const express = require('express');
-const bodyParser = require('body-parser');
-const fs = require('fs');
-const XLSX = require('xlsx');
-const path = require('path');
+const cookieParser = require('cookie-parser');
 const http = require('http');
 const WebSocket = require('ws');
-const cookieParser = require('cookie-parser');
+const db = require('./db');
+const path = require('path');
 
 const app = express();
 const server = http.createServer(app);
 const wss = new WebSocket.Server({ server });
 
-const PORT = process.env.PORT || 3000;
-const filePath = path.join(__dirname, 'database.xlsx');
-const aba = 'Registros';
-
-const COLUNAS_PADRAO = [
-  'Projeto', 'TipoObra', 'TipoProjeto', 'TipoDoc',
-  'Disciplina', 'Sequencia', 'Revisao',
-  'CodigoArquivo', 'Data', 'Autor'
-];
-
-// Banco de usuários (usuário → senha)
-const users = {
-  modulus01: '0001',
-  modulus02: '0002',
-  modulus03: '0003',
-  modulus04: '0004',
-  modulus05: '0005',
-  modulus06: '0006',
-  modulus07: '0007',
-  modulus08: '0008',
-  modulus09: '0009',
-  modulus10: '0010'
-};
-
-// Middlewares
-app.use(bodyParser.json());
 app.use(express.json());
 app.use(cookieParser());
-app.use(express.static(path.join(__dirname)));
+app.use(express.static(__dirname));
 
-// Autenticação
-function requireAuth(req, res, next) {
-  const { authUser } = req.cookies;
-  if (authUser && users[authUser]) {
-    next();
-  } else {
-    res.redirect('/login.html');
-  }
-}
+let clients = [];
 
-// Login
-app.post('/login', (req, res) => {
-  const { username, password } = req.body;
-  if (users[username] === password) {
-    res.cookie('authUser', username, { httpOnly: true });
-    res.json({ success: true });
-  } else {
-    res.json({ success: false });
-  }
-});
-
-// Logout
-app.get('/logout', (req, res) => {
-  res.clearCookie('authUser');
-  res.redirect('/login.html');
-});
-
-// Página protegida
-app.get('/', requireAuth, (req, res) => {
-  res.sendFile(path.join(__dirname, 'public/index.html'));
-});
-
-// Funções auxiliares
-function normalizarRegistro(registro) {
-  const novo = {};
-  COLUNAS_PADRAO.forEach(col => {
-    novo[col] = registro[col] || '';
+// Gerencia conexões WebSocket
+wss.on('connection', ws => {
+  clients.push(ws);
+  ws.on('close', () => {
+    clients = clients.filter(c => c !== ws);
   });
-  return novo;
-}
+});
 
+// Envia mensagem para todos os clientes conectados
 function broadcast(data) {
-  const mensagem = JSON.stringify(data);
-  wss.clients.forEach(client => {
+  const msg = JSON.stringify(data);
+  clients.forEach(client => {
     if (client.readyState === WebSocket.OPEN) {
-      client.send(mensagem);
+      client.send(msg);
     }
   });
 }
 
-function salvarDadosNaPlanilha(dados) {
-  const dadosNormalizados = dados.map(normalizarRegistro);
-  const sheet = XLSX.utils.json_to_sheet(dadosNormalizados, { header: COLUNAS_PADRAO });
-  const wb = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(wb, sheet, aba);
-  XLSX.writeFile(wb, filePath);
-}
+// ========== ROTAS BACK-END ==========
 
-// Rotas de API
+// Página de login
+app.get('/login', (req, res) => {
+  res.sendFile(path.join(__dirname, 'login.html'));
+});
+
+// Login simples (grava cookie)
+app.post('/login', (req, res) => {
+  let body = '';
+  req.on('data', chunk => (body += chunk));
+  req.on('end', () => {
+    const data = JSON.parse(body);
+    res.cookie('authUser', data.user, { httpOnly: false });
+    res.sendStatus(200);
+  });
+});
+
+// Logout (apaga cookie)
+app.get('/logout', (req, res) => {
+  res.clearCookie('authUser');
+  res.redirect('/login');
+});
+
+// ========== API PRINCIPAL ==========
+
+// Retorna todos os registros
+app.get('/api/registros', (req, res) => {
+  const rows = db.prepare('SELECT * FROM registros ORDER BY id DESC').all();
+  res.json(rows);
+});
+
+// Cria ou substitui um registro
 app.post('/api/data', (req, res) => {
-  const user = req.cookies.authUser || 'DESCONHECIDO';
-  const novaEntrada = normalizarRegistro(req.body);
+  const nova = req.body;
+  const codigoArquivo = nova.CodigoArquivo;
 
-  // Forçar o campo Autor com o usuário logado
-  novaEntrada.Autor = user;
+  db.prepare(`
+    INSERT OR REPLACE INTO registros
+    (Projeto, TipoObra, TipoProjeto, TipoDoc, Disciplina, Sequencia, Revisao, CodigoArquivo, Data, Autor)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+  `).run(
+    nova.Projeto,
+    nova.TipoObra,
+    nova.TipoProjeto,
+    nova.TipoDoc,
+    nova.Disciplina,
+    nova.Sequencia,
+    nova.Revisao,
+    codigoArquivo,
+    nova.Data,
+    req.cookies.authUser || 'DESCONHECIDO'
+  );
 
-  let dados = [];
-
-  if (fs.existsSync(filePath)) {
-    const workbook = XLSX.readFile(filePath);
-    const sheet = workbook.Sheets[aba];
-    dados = XLSX.utils.sheet_to_json(sheet);
-  }
-
-  dados.push(novaEntrada);
-  salvarDadosNaPlanilha(dados);
   broadcast({ action: 'update' });
   res.sendStatus(200);
 });
 
-app.get('/api/registros', (req, res) => {
-  if (!fs.existsSync(filePath)) return res.json([]);
-  const workbook = XLSX.readFile(filePath);
-  const sheet = workbook.Sheets[aba];
-  const dados = XLSX.utils.sheet_to_json(sheet);
-  res.json(dados.map(normalizarRegistro));
-});
-
+// Apaga registro específico
 app.delete('/api/data/:codigoArquivo', (req, res) => {
-  if (!fs.existsSync(filePath)) return res.sendStatus(404);
   const codigo = req.params.codigoArquivo;
-
-  const workbook = XLSX.readFile(filePath);
-  const sheet = workbook.Sheets[aba];
-  let dados = XLSX.utils.sheet_to_json(sheet);
-  dados = dados.filter(reg => reg.CodigoArquivo !== codigo);
-
-  salvarDadosNaPlanilha(dados);
+  db.prepare('DELETE FROM registros WHERE CodigoArquivo = ?').run(codigo);
   broadcast({ action: 'delete' });
   res.sendStatus(200);
 });
 
+// Edita um campo (sequencia ou revisão)
 app.put('/api/data/:codigoArquivo/campo', (req, res) => {
-  if (!fs.existsSync(filePath)) return res.sendStatus(404);
-
   const { campo, valor } = req.body;
   const codigo = req.params.codigoArquivo;
 
-  const workbook = XLSX.readFile(filePath);
-  const sheet = workbook.Sheets[aba];
-  const dados = XLSX.utils.sheet_to_json(sheet);
+  if (!['Sequencia', 'Revisao'].includes(campo)) return res.sendStatus(400);
 
-  const atualizados = dados.map(reg =>
-    reg.CodigoArquivo === codigo ? { ...reg, [campo]: valor } : reg
-  );
-
-  salvarDadosNaPlanilha(atualizados);
+  db.prepare(`UPDATE registros SET ${campo} = ? WHERE CodigoArquivo = ?`).run(valor, codigo);
+  broadcast({ action: 'update' });
   res.sendStatus(200);
 });
 
-app.post('/api/exportar-filtro', (req, res) => {
-  const dados = req.body.map(normalizarRegistro);
+// Exporta para CSV
+app.get('/api/exportar-csv', (req, res) => {
+  const rows = db.prepare('SELECT * FROM registros').all();
+  if (rows.length === 0) {
+    return res.send('Nenhum registro para exportar.');
+  }
 
-  const sheet = XLSX.utils.json_to_sheet(dados, { header: COLUNAS_PADRAO });
-  const workbook = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(workbook, sheet, 'Filtrado');
+  const header = Object.keys(rows[0]).join(',');
+  const csv = [header, ...rows.map(r => Object.values(r).map(v => `"${v}"`).join(','))].join('\n');
 
-  const buffer = XLSX.write(workbook, { type: 'buffer', bookType: 'xlsx' });
-
-  res.setHeader('Content-Disposition', 'attachment; filename="dados-filtrados.xlsx"');
-  res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-  res.send(buffer);
+  res.header('Content-Type', 'text/csv');
+  res.attachment('dados.csv').send(csv);
 });
 
-// Inicia o servidor
+// ========== INICIALIZA SERVIDOR ==========
+
+const PORT = process.env.PORT || 3000;
 server.listen(PORT, () => {
-  console.log(`Servidor rodando em http://localhost:${PORT}`);
+  console.log(`Servidor rodando na porta ${PORT}`);
 });
