@@ -347,13 +347,16 @@ button {
 }
 
 .btn-principal, .btn-secundario {
-  padding: 5px 20px;
+  height: 32px;
+  padding: 0 20px;
   border: none;
-  border-radius: 12px;
+  border-radius: 10px;
   cursor: pointer;
   font-size: 14px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   transition: background-color 0.3s ease;
-  min-height: auto;
 }
 
 .btn-principal {
@@ -374,5 +377,6 @@ button {
 .btn-secundario:hover {
   background-color: #e5e5ea;
 }
+
 
 
