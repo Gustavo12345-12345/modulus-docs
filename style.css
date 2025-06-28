@@ -1,110 +1,30 @@
-/* ===========================================
-   APPLE-INSPIRED LIGHT-ONLY DESIGN
-   No dark mode. Combos horizontal.
-=========================================== */
-
-/* RESET & BASE */
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
-
-body {
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-  background-color: #f5f5f7;
-  color: #1d1d1f;
-  padding: 30px 20px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-/* LOGO SMALLER & CENTERED */
-.logo-superior-central {
-  display: block;
-  margin: 10px auto 20px auto;
-  height: 40px;
-  width: auto;
-  object-fit: contain;
-  opacity: 0.9;
-}
-
-/* HEADINGS */
-h1, h2 {
-  text-align: center;
-  color: #1d1d1f;
-  font-weight: 600;
-  margin-bottom: 20px;
-}
-
-/* CONTAINER WITH FLEX HORIZONTAL */
-.container {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
-  justify-content: center;
-  margin-bottom: 20px;
-  max-width: 1000px;
-}
-
-/* COMBOBOXES INLINE STYLES */
-.combo {
-  display: flex;
-  flex-direction: column;
-  width: 180px;
-  background-color: #ffffff;
-  padding: 10px 14px;
-  border-radius: 10px;
-  border: 1px solid #d1d1d6;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-  transition: border 0.2s ease;
-}
-
-.combo label {
-  margin-bottom: 4px;
-  font-size: 13px;
-  color: #3a3a3c;
-}
-
-.combo select,
-.combo input {
-  padding: 8px;
-  border: 1px solid #d1d1d6;
-  border-radius: 8px;
-  background-color: #fff;
-  font-size: 13px;
-  color: #1d1d1f;
-  transition: border 0.2s;
-}
-
-.combo select:focus,
-.combo input:focus {
-  border-color: #0071e3;
-  outline: none;
-}
-
-/* BUTTONS ALIGNED INLINE WITH COMBOS */
+/* ===== BOTOES LADO A LADO DE VERDADE ===== */
 .botoes-lado-a-lado {
-  display: flex;
-  gap: 12px;
-  flex-wrap: wrap;
+  display: inline-flex;
+  flex-direction: row;
   justify-content: center;
-  margin-top: 12px;
+  align-items: center;
+  gap: 12px;
+  margin-top: 16px;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  white-space: nowrap;
 }
 
-button {
-  padding: 10px 20px;
+.botoes-lado-a-lado button {
+  flex: 0 0 auto;
+  padding: 10px 22px;
   background-color: #0071e3;
   color: white;
   border: none;
-  border-radius: 10px;
+  border-radius: 8px;
   cursor: pointer;
-  font-size: 13px;
+  font-size: 14px;
   transition: background-color 0.3s ease;
+  white-space: nowrap;
 }
 
-button:hover {
+.botoes-lado-a-lado button:hover {
   background-color: #005bb5;
 }
 
@@ -116,132 +36,12 @@ button:hover {
   background-color: #6e6e73;
 }
 
-/* TABLE STYLES */
-table {
-  margin-top: 20px;
-  border-collapse: separate;
-  border-spacing: 0;
-  width: 100%;
-  max-width: 1200px;
-  background-color: #ffffff;
-  border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-  overflow: hidden;
-  font-size: 12px;
-}
-
-th, td {
-  padding: 10px;
-  text-align: center;
-  border-bottom: 1px solid #e5e5ea;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  color: #1d1d1f;
-}
-
-th {
-  background-color: #f2f2f7;
-  font-weight: 600;
-  font-size: 12.5px;
-}
-
-/* COLUMNS: CodigoArquivo wider, rest uniform */
-th:nth-child(8), td:nth-child(8) {
-  width: 300px; /* CodigoArquivo largo */
-}
-
-th:not(:nth-child(8)), td:not(:nth-child(8)) {
-  width: 90px;
-}
-
-/* FILTER ROW IN TABLE */
-tr.filtros input {
-  width: 90%;
-  padding: 6px;
-  border-radius: 8px;
-  border: 1px solid #d1d1d6;
-  background-color: #fafafa;
-  font-size: 11px;
-  color: #1d1d1f;
-  transition: border 0.2s ease;
-}
-
-tr.filtros input:focus {
-  border-color: #0071e3;
-  outline: none;
-}
-
-/* LOGIN PAGE */
-.login-container {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  width: 300px;
-  margin: 20px auto;
-  background-color: #ffffff;
-  padding: 24px;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-}
-
-.login-container input {
-  padding: 10px;
-  border: 1px solid #d1d1d6;
-  border-radius: 10px;
-  background-color: #fafafa;
-  font-size: 13px;
-  color: #1d1d1f;
-  transition: border 0.2s;
-}
-
-.login-container input:focus {
-  border-color: #0071e3;
-  outline: none;
-}
-
-.login-container input::placeholder {
-  color: #8e8e93;
-}
-
-.login-container button {
-  padding: 10px 20px;
-  background-color: #0071e3;
-  color: white;
-  border: none;
-  border-radius: 10px;
-  cursor: pointer;
-  font-size: 13px;
-  transition: background-color 0.3s ease;
-}
-
-.login-container button:hover {
-  background-color: #005bb5;
-}
-
-.erro-login {
-  color: #ff3b30;
-  text-align: center;
-  font-size: 12px;
-  margin-top: 8px;
-}
-
-/* UTILITY HELPERS */
-.flex-wrap-center {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 12px;
-}
-
-.rounded {
-  border-radius: 10px;
-}
-
-.shadow-light {
-  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-}
-
-.transition {
-  transition: all 0.3s ease;
+/* ===== LOGO INFERIOR MUITO MENOR ===== */
+.logo-canto-inferior {
+  display: block;
+  margin: 20px auto 10px auto;
+  height: 25px;  /* BEM menor */
+  width: auto;
+  opacity: 0.7;
+  object-fit: contain;
 }
