@@ -29,7 +29,7 @@ function broadcast(message) {
   });
 }
 
-// ====== LOGIN ======
+// Login
 app.get('/login', (req, res) => {
   res.sendFile(path.join(__dirname, 'login.html'));
 });
@@ -51,8 +51,6 @@ app.get('/logout', (req, res) => {
   res.redirect('/login');
 });
 
-// ====== API ======
-
 // GET registros
 app.get('/api/registros', (req, res) => {
   db.all('SELECT * FROM registros ORDER BY id DESC', (err, rows) => {
@@ -64,7 +62,7 @@ app.get('/api/registros', (req, res) => {
   });
 });
 
-// POST criar ou atualizar
+// POST - inserir ou atualizar
 app.post('/api/data', (req, res) => {
   const data = req.body;
   const autor = req.cookies.authUser || 'DESCONHECIDO';
@@ -72,6 +70,7 @@ app.post('/api/data', (req, res) => {
   const required = ['Projeto','TipoObra','TipoProjeto','TipoDoc','Disciplina','Sequencia','Revisao','CodigoArquivo','Data'];
   for (let field of required) {
     if (!data[field]) {
+      console.error('Campo faltando:', field);
       return res.status(400).json({ error: `Campo obrigatório faltando: ${field}` });
     }
   }
@@ -96,9 +95,10 @@ app.post('/api/data', (req, res) => {
 
   db.run(sql, values, function(err) {
     if (err) {
-      console.error(err);
+      console.error('Erro SQL:', err);
       return res.status(500).json({ error: 'Erro ao salvar no banco.' });
     }
+    console.log('Registro salvo com sucesso!');
     broadcast({ action: 'update' });
     res.sendStatus(200);
   });
@@ -117,7 +117,7 @@ app.delete('/api/data/:codigoArquivo', (req, res) => {
   });
 });
 
-// PUT atualizar campo (sequencia ou revisão)
+// PUT - atualizar campo específico
 app.put('/api/data/:codigoArquivo/campo', (req, res) => {
   const { campo, valor } = req.body;
   const codigo = req.params.codigoArquivo;
@@ -137,7 +137,7 @@ app.put('/api/data/:codigoArquivo/campo', (req, res) => {
   });
 });
 
-// GET exportar CSV
+// Exportar CSV
 app.get('/api/exportar-csv', (req, res) => {
   db.all('SELECT * FROM registros', (err, rows) => {
     if (err || !rows.length) {
