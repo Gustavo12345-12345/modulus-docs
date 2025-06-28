@@ -222,3 +222,97 @@ tr.filtros input:focus {
   font-size: 12px;
   margin-top: 8px;
 }
+/* CONTAINER dos combos ocupa 100% com grid distribuído */
+.container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 16px;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 10px 0;
+  background-color: #ffffff;
+  border-radius: 10px;
+}
+
+/* Cada combo se ajusta para preencher igualmente */
+.combo {
+  display: flex;
+  flex-direction: column;
+  background-color: #fff;
+  padding: 10px 12px;
+  border: 1px solid #d1d1d6;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+
+/* Label e input/select consistentes */
+.combo label {
+  margin-bottom: 5px;
+  font-size: 13px;
+  color: #3a3a3c;
+}
+
+.combo select,
+.combo input {
+  padding: 8px;
+  border: 1px solid #d1d1d6;
+  border-radius: 7px;
+  font-size: 13px;
+  background-color: #fff;
+  color: #1d1d1f;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* Botões em linha ocupando toda a largura */
+.botoes-lado-a-lado {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-top: 20px;
+}
+
+.botoes-lado-a-lado button {
+  padding: 10px 20px;
+  background-color: #0071e3;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.3s ease;
+}
+
+.botoes-lado-a-lado button:hover {
+  background-color: #005bb5;
+}
+
+#btnLimparFiltros {
+  background-color: #86868b;
+}
+
+#btnLimparFiltros:hover {
+  background-color: #6e6e73;
+}
+
+/* LOGO SUPERIOR MENOR */
+.logo-superior-central {
+  display: block;
+  margin: 5px auto 15px auto;
+  height: 20px;
+  width: auto;
+  object-fit: contain;
+  opacity: 0.85;
+}
+
+/* LOGO INFERIOR MENOR */
+.logo-canto-inferior {
+  display: block;
+  margin: 20px auto 10px auto;
+  height: 20px;
+  width: auto;
+  opacity: 0.7;
+  object-fit: contain;
+}
