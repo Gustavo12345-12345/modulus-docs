@@ -212,3 +212,53 @@ tr.filtros input:focus {
   text-align: center;
   font-size: 13px;
 }
+/* ====== Melhorias Apple-like extras ====== */
+.combos-wrapper {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 20px;
+  width: 100%;
+}
+
+.logout-link {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  text-decoration: none;
+  color: #0071e3;
+  font-weight: 500;
+}
+
+.logout-link:hover {
+  text-decoration: underline;
+}
+
+button {
+  font-weight: 500;
+  letter-spacing: 0.25px;
+}
+
+.combo select,
+.combo input {
+  border: 1px solid #c7c7cc;
+  background-color: #f9f9f9;
+}
+
+.combo select:hover,
+.combo input:hover {
+  background-color: #f2f2f7;
+}
+
+.combo select:focus,
+.combo input:focus {
+  border-color: #0071e3;
+  background-color: #ffffff;
+}
+
+/* Ajuste para logo no rodapé */
+.logo-canto-inferior {
+  display: block;
+  margin: 40px auto 10px auto;
+  height: 40px;
+  opacity: 0.5;
+}
