@@ -368,3 +368,38 @@ button {
 .btn-secundario:hover {
   background-color: #e5e5ea;
 }
+.botoes-linha {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.btn-principal, .btn-secundario {
+  padding: 10px 16px;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.3s ease;
+}
+
+.btn-principal {
+  background-color: #0071e3;
+  color: #fff;
+}
+
+.btn-principal:hover {
+  background-color: #005bb5;
+}
+
+.btn-secundario {
+  background-color: #f2f2f7;
+  border: 1px solid #d1d1d6;
+  color: #1d1d1f;
+}
+
+.btn-secundario:hover {
+  background-color: #e5e5ea;
+}
