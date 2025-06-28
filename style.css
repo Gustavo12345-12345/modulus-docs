@@ -261,48 +261,4 @@ button {
   margin: 40px auto 10px auto;
   height: 40px;
   opacity: 0.5;
-  
-}
-/* botão principal (Gerar Código) dentro da combo */
-.btn-principal {
-  margin-top: 10px;
-  padding: 10px 16px;
-  background-color: #0071e3;
-  color: #fff;
-  border: none;
-  border-radius: 12px;
-  cursor: pointer;
-  font-size: 14px;
-  width: 100%;
-  transition: background-color 0.3s ease;
-}
-
-.btn-principal:hover {
-  background-color: #005bb5;
-}
-
-/* container dos dois botões pequenos */
-.botoes-secundarios {
-  display: flex;
-  gap: 12px;
-  margin-top: 20px;
-  justify-content: center;
-  flex-wrap: wrap;
-}
-
-/* botões secundários menores e Apple-like */
-.btn-secundario {
-  padding: 8px 14px;
-  background-color: #f2f2f7;
-  color: #1d1d1f;
-  border: 1px solid #d1d1d6;
-  border-radius: 10px;
-  cursor: pointer;
-  font-size: 13px;
-  transition: background-color 0.3s ease, border-color 0.3s ease;
-}
-
-.btn-secundario:hover {
-  background-color: #e5e5ea;
-  border-color: #bfbfc4;
 }
