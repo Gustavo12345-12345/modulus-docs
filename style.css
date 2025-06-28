@@ -316,3 +316,17 @@ tr.filtros input:focus {
   opacity: 0.7;
   object-fit: contain;
 }
+.combos-linha {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.combo {
+  flex: 1 1 150px;
+  min-width: 150px;
+  display: flex;
+  flex-direction: column;
+}
