@@ -1,70 +1,153 @@
-/* ====== Base geral ====== */
+/* =======================================================================
+   APPLE-STYLE DARK & LIGHT THEME - PROFESSIONAL CSS ~300 lines
+   For: index.html, login.html, table, comboboxes, logo
+======================================================================= */
+
+/* ===================== BASE VARIABLES ===================== */
+
+:root {
+  --color-bg: #f5f5f7;
+  --color-bg-secondary: #ffffff;
+  --color-border: #d1d1d6;
+  --color-text: #1d1d1f;
+  --color-placeholder: #8e8e93;
+  --color-primary: #0071e3;
+  --color-primary-hover: #005bb5;
+  --color-secondary: #86868b;
+  --color-secondary-hover: #6e6e73;
+  --color-error: #ff3b30;
+  --color-shadow: rgba(0, 0, 0, 0.08);
+  --color-shadow-strong: rgba(0, 0, 0, 0.12);
+}
+
+/* ===================== DARK MODE VARIABLES ===================== */
+
+body.dark-mode {
+  --color-bg: #1c1c1e;
+  --color-bg-secondary: #2c2c2e;
+  --color-border: #3a3a3c;
+  --color-text: #f2f2f7;
+  --color-placeholder: #8e8e93;
+  --color-primary: #0a84ff;
+  --color-primary-hover: #0066cc;
+  --color-secondary: #8e8e93;
+  --color-secondary-hover: #636366;
+  --color-error: #ff453a;
+  --color-shadow: rgba(0, 0, 0, 0.5);
+  --color-shadow-strong: rgba(0, 0, 0, 0.7);
+}
+
+/* ===================== RESET ===================== */
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* ===================== BODY ===================== */
+
 body {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-  background-color: #f5f5f7;
-  margin: 0;
+  background-color: var(--color-bg);
+  color: var(--color-text);
   padding: 40px 20px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  color: #1d1d1f;
+  transition: background-color 0.3s, color 0.3s;
 }
 
-h1, h2 {
-  text-align: center;
-  margin-top: 0;
-  color: #1d1d1f;
-  font-weight: 600;
-}
+/* ===================== LOGO ===================== */
 
-/* ====== Logo no topo ====== */
 .logo-superior-central {
   display: block;
   margin: 30px auto 20px auto;
   height: 80px;
   width: auto;
   object-fit: contain;
+  filter: drop-shadow(0 4px 8px var(--color-shadow));
 }
 
-/* ====== Container de campos ====== */
+/* ===================== HEADERS ===================== */
+
+h1, h2 {
+  text-align: center;
+  font-weight: 600;
+  margin-bottom: 20px;
+  color: var(--color-text);
+}
+
+/* ===================== CONTAINER ===================== */
+
 .container {
   display: flex;
   flex-wrap: wrap;
   gap: 20px;
   justify-content: center;
+  max-width: 1200px;
   margin-bottom: 30px;
-  max-width: 1000px;
 }
+
+/* ===================== COMBOBOXES ===================== */
 
 .combo {
   display: flex;
   flex-direction: column;
   width: 220px;
+  background-color: var(--color-bg-secondary);
+  padding: 16px;
+  border-radius: 12px;
+  border: 1px solid var(--color-border);
+  box-shadow: 0 2px 6px var(--color-shadow);
+  transition: background-color 0.3s, border 0.3s, box-shadow 0.3s;
 }
 
 .combo label {
   margin-bottom: 6px;
   font-size: 14px;
-  color: #3a3a3c;
+  color: var(--color-text);
+  font-weight: 500;
 }
 
 .combo select,
 .combo input {
-  padding: 12px;
-  border: 1px solid #d1d1d6;
-  border-radius: 12px;
-  background-color: #ffffff;
+  padding: 10px;
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+  background-color: var(--color-bg);
   font-size: 14px;
-  transition: border 0.2s ease;
+  color: var(--color-text);
+  transition: border 0.2s, background-color 0.3s, color 0.3s;
 }
 
 .combo select:focus,
 .combo input:focus {
-  border-color: #0071e3;
+  border-color: var(--color-primary);
   outline: none;
 }
 
-/* ====== Botões ====== */
+.combo input::placeholder {
+  color: var(--color-placeholder);
+}
+
+/* ===================== HORIZONTAL LAYOUT ===================== */
+
+@media (min-width: 600px) {
+  .container {
+    flex-wrap: nowrap;
+    flex-direction: row;
+    overflow-x: auto;
+  }
+
+  .combo {
+    flex: 1 1 200px;
+    min-width: 200px;
+  }
+}
+
+/* ===================== BUTTONS ===================== */
+
 .botoes-lado-a-lado {
   display: flex;
   gap: 12px;
@@ -74,126 +157,182 @@ h1, h2 {
 
 button {
   padding: 12px 24px;
-  background-color: #0071e3;
+  background-color: var(--color-primary);
   color: white;
   border: none;
   border-radius: 12px;
   cursor: pointer;
   font-size: 14px;
-  transition: background-color 0.3s ease;
+  transition: background-color 0.3s, box-shadow 0.3s;
+  box-shadow: 0 2px 6px var(--color-shadow);
 }
 
 button:hover {
-  background-color: #005bb5;
+  background-color: var(--color-primary-hover);
 }
 
 #btnLimparFiltros {
-  background-color: #86868b;
+  background-color: var(--color-secondary);
 }
 
 #btnLimparFiltros:hover {
-  background-color: #6e6e73;
+  background-color: var(--color-secondary-hover);
 }
 
-/* ====== Tabela ====== */
+/* ===================== TABELA ===================== */
+
 table {
   margin-top: 30px;
   border-collapse: separate;
   border-spacing: 0;
   width: 100%;
   max-width: 1200px;
-  background-color: #ffffff;
+  background-color: var(--color-bg-secondary);
   border-radius: 16px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  box-shadow: 0 4px 12px var(--color-shadow);
   overflow: hidden;
   font-size: 12px;
+  transition: background-color 0.3s;
 }
 
 th, td {
   padding: 12px;
   text-align: center;
-  border-bottom: 1px solid #e5e5ea;
+  border-bottom: 1px solid var(--color-border);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  color: #1d1d1f;
+  color: var(--color-text);
+  transition: background-color 0.3s, color 0.3s;
 }
 
 th {
-  background-color: #f2f2f7;
+  background-color: var(--color-bg);
   font-weight: 600;
   font-size: 13px;
 }
 
-/* ====== Ajuste específico de largura de colunas ====== */
+/* COLUNAS IGUAIS EXCETO CodigoArquivo */
 th:nth-child(8), td:nth-child(8) {
-  width: 280px;  /* CodigoArquivo mais largo */
+  width: 300px; /* CodigoArquivo maior */
 }
 
 th:not(:nth-child(8)), td:not(:nth-child(8)) {
-  width: 80px;  /* Outras colunas todas iguais */
+  width: 100px;
 }
 
-/* ====== Filtros na tabela ====== */
+/* ===================== FILTROS DA TABELA ===================== */
+
 tr.filtros input {
   width: 90%;
   padding: 8px;
   border-radius: 10px;
-  border: 1px solid #d1d1d6;
-  background-color: #fafafa;
+  border: 1px solid var(--color-border);
+  background-color: var(--color-bg);
   font-size: 11px;
-  transition: border 0.2s ease;
+  color: var(--color-text);
+  transition: border 0.2s, background-color 0.3s;
 }
 
 tr.filtros input:focus {
-  border-color: #0071e3;
+  border-color: var(--color-primary);
   outline: none;
 }
 
-/* ====== Login page ====== */
+/* ===================== LOGIN PAGE ===================== */
+
 .login-container {
   display: flex;
   flex-direction: column;
   gap: 15px;
   width: 320px;
   margin: 30px auto;
-  background-color: #ffffff;
+  background-color: var(--color-bg-secondary);
   padding: 30px;
   border-radius: 16px;
-  box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+  box-shadow: 0 8px 24px var(--color-shadow);
+  transition: background-color 0.3s, box-shadow 0.3s;
 }
 
 .login-container input {
   padding: 12px;
-  border: 1px solid #d1d1d6;
+  border: 1px solid var(--color-border);
   border-radius: 12px;
-  background-color: #fafafa;
+  background-color: var(--color-bg);
   font-size: 14px;
-  transition: border 0.2s ease;
+  color: var(--color-text);
+  transition: border 0.2s, background-color 0.3s, color 0.3s;
 }
 
 .login-container input:focus {
-  border-color: #0071e3;
+  border-color: var(--color-primary);
   outline: none;
+}
+
+.login-container input::placeholder {
+  color: var(--color-placeholder);
 }
 
 .login-container button {
   padding: 12px 24px;
-  background-color: #0071e3;
+  background-color: var(--color-primary);
   color: white;
   border: none;
   border-radius: 12px;
   cursor: pointer;
   font-size: 14px;
-  transition: background-color 0.3s ease;
+  transition: background-color 0.3s;
 }
 
 .login-container button:hover {
-  background-color: #005bb5;
+  background-color: var(--color-primary-hover);
 }
 
 .erro-login {
-  color: #ff3b30;
+  color: var(--color-error);
   text-align: center;
   font-size: 13px;
+  margin-top: 10px;
+}
+
+/* ===================== DARK MODE SUPPORT FOR LOGO ===================== */
+
+body.dark-mode .logo-superior-central {
+  filter: drop-shadow(0 4px 8px var(--color-shadow-strong));
+}
+
+/* ===================== UTILITY CLASSES ===================== */
+
+.hidden {
+  display: none !important;
+}
+
+.flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.text-small {
+  font-size: 12px;
+}
+
+.rounded {
+  border-radius: 12px;
+}
+
+.shadow-light {
+  box-shadow: 0 2px 6px var(--color-shadow);
+}
+
+.shadow-strong {
+  box-shadow: 0 8px 24px var(--color-shadow);
+}
+
+.transition {
+  transition: all 0.3s ease;
 }
