@@ -1,27 +1,32 @@
 {
   "name": "modulus-docs",
   "version": "1.0.0",
-  "description": "Aplicação Node.js com Excel e front-end",
+  "description": "Aplicação Node.js com Express, SQLite e front-end Apple-like",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"
   },
   "dependencies": {
-    "body-parser": "^1.20.3",
     "cookie-parser": "^1.4.7",
     "express": "^4.21.2",
-    "ws": "^8.18.2",
-    "xlsx": "^0.18.5"
+    "sqlite3": "^5.1.7",
+    "ws": "^8.18.3"
   },
   "license": "ISC",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/seu-usuario/modulus-docs.git"
+    "url": "https://github.com/Gustavo12345-12345/modulus-docs.git"
   },
-  "keywords": [],
+  "keywords": [
+    "express",
+    "sqlite",
+    "node",
+    "modulus",
+    "documentos"
+  ],
   "author": "",
   "bugs": {
-    "url": "https://github.com/seu-usuario/modulus-docs/issues"
+    "url": "https://github.com/Gustavo12345-12345/modulus-docs/issues"
   },
-  "homepage": "https://github.com/seu-usuario/modulus-docs#readme"
+  "homepage": "https://github.com/Gustavo12345-12345/modulus-docs#readme"
 }
