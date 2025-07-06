@@ -1,82 +1,105 @@
-
 const { Pool } = require('pg');
 
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
-  ssl: {
-    rejectUnauthorized: false
-  }
+  ssl: { rejectUnauthorized: false }
 });
 
-async function inicializarBanco() {
+// Criação da tabela caso ainda não exista
+(async () => {
+  const createTableQuery = `
+    CREATE TABLE IF NOT EXISTS registros (
+      id SERIAL PRIMARY KEY,
+      Projeto TEXT,
+      TipoObra TEXT,
+      TipoProjeto TEXT,
+      TipoDoc TEXT,
+      Disciplina TEXT,
+      Sequencia TEXT,
+      Revisao TEXT,
+      CodigoArquivo TEXT,
+      Data TEXT,
+      Autor TEXT
+    );
+  `;
   try {
-    await pool.query(`
-      CREATE TABLE IF NOT EXISTS registros (
-        id SERIAL PRIMARY KEY,
-        projeto TEXT,
-        tipoObra TEXT,
-        tipoProjeto TEXT,
-        tipoDoc TEXT,
-        disciplina TEXT,
-        sequencia TEXT,
-        revisao TEXT,
-        codigoArquivo TEXT UNIQUE,
-        data TEXT,
-        autor TEXT
-      );
-    `);
-    console.log("Banco de dados PostgreSQL inicializado.");
+    await pool.query(createTableQuery);
+    console.log("Tabela 'registros' verificada/criada.");
   } catch (err) {
-    console.error("Erro ao inicializar o banco:", err);
+    console.error("Erro ao criar tabela:", err);
   }
-}
-
-async function inserirRegistro(registro) {
-  const query = \`
-    INSERT INTO registros (
-      projeto, tipoObra, tipoProjeto, tipoDoc, disciplina,
-      sequencia, revisao, codigoArquivo, data, autor
-    ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)
-    ON CONFLICT (codigoArquivo) DO UPDATE SET
-      projeto = EXCLUDED.projeto,
-      tipoObra = EXCLUDED.tipoObra,
-      tipoProjeto = EXCLUDED.tipoProjeto,
-      tipoDoc = EXCLUDED.tipoDoc,
-      disciplina = EXCLUDED.disciplina,
-      sequencia = EXCLUDED.sequencia,
-      revisao = EXCLUDED.revisao,
-      data = EXCLUDED.data,
-      autor = EXCLUDED.autor;
-  \`;
-
-  const valores = [
-    registro.projeto,
-    registro.tipoObra,
-    registro.tipoProjeto,
-    registro.tipoDoc,
-    registro.disciplina,
-    registro.sequencia,
-    registro.revisao,
-    registro.codigoArquivo,
-    registro.data,
-    registro.autor
-  ];
-
-  await pool.query(query, valores);
-}
-
-async function buscarRegistros() {
-  const res = await pool.query('SELECT * FROM registros ORDER BY id DESC');
-  return res.rows;
-}
-
-async function excluirRegistro(codigoArquivo) {
-  await pool.query('DELETE FROM registros WHERE codigoArquivo = $1', [codigoArquivo]);
-}
+})();
 
 module.exports = {
-  inicializarBanco,
-  inserirRegistro,
-  buscarRegistros,
-  excluirRegistro
+  insertData: async (dados, callback) => {
+    const query = `
+      INSERT INTO registros (
+        Projeto, TipoObra, TipoProjeto, TipoDoc, Disciplina,
+        Sequencia, Revisao, CodigoArquivo, Data, Autor
+      ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)
+      RETURNING *;
+    `;
+    try {
+      const result = await pool.query(query, [
+        dados.Projeto,
+        dados.TipoObra,
+        dados.TipoProjeto,
+        dados.TipoDoc,
+        dados.Disciplina,
+        dados.Sequencia,
+        dados.Revisao,
+        dados.CodigoArquivo,
+        dados.Data,
+        dados.Autor
+      ]);
+      callback(null, result.rows[0]);
+    } catch (err) {
+      callback(err);
+    }
+  },
+
+  getAllData: async (callback) => {
+    try {
+      const result = await pool.query('SELECT * FROM registros');
+      callback(null, result.rows);
+    } catch (err) {
+      callback(err, null);
+    }
+  },
+
+  deleteRow: async (id, callback) => {
+    try {
+      await pool.query('DELETE FROM registros WHERE id = $1', [id]);
+      callback(null);
+    } catch (err) {
+      callback(err);
+    }
+  },
+
+  updateRow: async (id, dados, callback) => {
+    const query = `
+      UPDATE registros SET
+        Projeto=$1, TipoObra=$2, TipoProjeto=$3, TipoDoc=$4, Disciplina=$5,
+        Sequencia=$6, Revisao=$7, CodigoArquivo=$8, Data=$9, Autor=$10
+      WHERE id=$11
+    `;
+    try {
+      await pool.query(query, [
+        dados.Projeto,
+        dados.TipoObra,
+        dados.TipoProjeto,
+        dados.TipoDoc,
+        dados.Disciplina,
+        dados.Sequencia,
+        dados.Revisao,
+        dados.CodigoArquivo,
+        dados.Data,
+        dados.Autor,
+        id
+      ]);
+      callback(null);
+    } catch (err) {
+      callback(err);
+    }
+  }
 };
