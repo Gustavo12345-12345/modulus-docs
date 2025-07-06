@@ -3,7 +3,8 @@ const cookieParser = require('cookie-parser');
 const http = require('http');
 const WebSocket = require('ws');
 const path = require('path');
-const db = require('./db');
+const db = require('./db_postgres');
+
 
 const app = express();
 const server = http.createServer(app);
