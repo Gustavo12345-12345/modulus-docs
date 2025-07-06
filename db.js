@@ -1,32 +1,82 @@
 
+const { Pool } = require('pg');
 
-// db.js
-const sqlite3 = require('sqlite3').verbose();
-const path = require('path');
-
-const dbPath = path.join(__dirname, 'database.db');
-const db = new sqlite3.Database(dbPath, (err) => {
-  if (err) console.error('Erro ao abrir banco:', err);
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
+  ssl: {
+    rejectUnauthorized: false
+  }
 });
 
-db.serialize(() => {
-  db.run(`
-    CREATE TABLE IF NOT EXISTS registros (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      Projeto TEXT,
-      TipoObra TEXT,
-      TipoProjeto TEXT,
-      TipoDoc TEXT,
-      Disciplina TEXT,
-      Sequencia TEXT,
-      Revisao TEXT,
-      CodigoArquivo TEXT UNIQUE,
-      Data TEXT,
-      Autor TEXT
-    )
-  `, (err) => {
-    if (err) console.error('Erro ao criar tabela:', err);
-  });
-});
+async function inicializarBanco() {
+  try {
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS registros (
+        id SERIAL PRIMARY KEY,
+        projeto TEXT,
+        tipoObra TEXT,
+        tipoProjeto TEXT,
+        tipoDoc TEXT,
+        disciplina TEXT,
+        sequencia TEXT,
+        revisao TEXT,
+        codigoArquivo TEXT UNIQUE,
+        data TEXT,
+        autor TEXT
+      );
+    `);
+    console.log("Banco de dados PostgreSQL inicializado.");
+  } catch (err) {
+    console.error("Erro ao inicializar o banco:", err);
+  }
+}
 
-module.exports = db;
+async function inserirRegistro(registro) {
+  const query = \`
+    INSERT INTO registros (
+      projeto, tipoObra, tipoProjeto, tipoDoc, disciplina,
+      sequencia, revisao, codigoArquivo, data, autor
+    ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)
+    ON CONFLICT (codigoArquivo) DO UPDATE SET
+      projeto = EXCLUDED.projeto,
+      tipoObra = EXCLUDED.tipoObra,
+      tipoProjeto = EXCLUDED.tipoProjeto,
+      tipoDoc = EXCLUDED.tipoDoc,
+      disciplina = EXCLUDED.disciplina,
+      sequencia = EXCLUDED.sequencia,
+      revisao = EXCLUDED.revisao,
+      data = EXCLUDED.data,
+      autor = EXCLUDED.autor;
+  \`;
+
+  const valores = [
+    registro.projeto,
+    registro.tipoObra,
+    registro.tipoProjeto,
+    registro.tipoDoc,
+    registro.disciplina,
+    registro.sequencia,
+    registro.revisao,
+    registro.codigoArquivo,
+    registro.data,
+    registro.autor
+  ];
+
+  await pool.query(query, valores);
+}
+
+async function buscarRegistros() {
+  const res = await pool.query('SELECT * FROM registros ORDER BY id DESC');
+  return res.rows;
+}
+
+async function excluirRegistro(codigoArquivo) {
+  await pool.query('DELETE FROM registros WHERE codigoArquivo = $1', [codigoArquivo]);
+}
+
+module.exports = {
+  inicializarBanco,
+  inserirRegistro,
+  buscarRegistros,
+  excluirRegistro
+};
